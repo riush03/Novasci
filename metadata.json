@@ -1,0 +1,7 @@
+{
+  "name": "NovaSci: 3D Quantum Holo-Deck",
+  "description": "An immersive 3D science learning environment powered by Gemini TTS and interactive Three.js simulations. Explore physics and chemistry in a futuristic holographic classroom.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
