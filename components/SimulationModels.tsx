@@ -10,7 +10,7 @@ import * as THREE from 'three';
 import { ScienceModule } from '../types';
 
 // --- HELPER: INDICATOR ARROW ---
-const IndicatorArrow = ({ position, rotation, label, color = "#22d3ee" }: { position: [number, number, number], rotation: [number, number, number], label: string, color?: string }) => {
+const IndicatorArrow = ({ position, rotation, label, subLabel, color = "#22d3ee" }: { position: [number, number, number], rotation: [number, number, number], label: string, subLabel?: string, color?: string }) => {
   return (
     <group position={position} rotation={rotation}>
       <Float speed={3} rotationIntensity={0.2} floatIntensity={0.4}>
@@ -21,7 +21,7 @@ const IndicatorArrow = ({ position, rotation, label, color = "#22d3ee" }: { posi
           <Cone args={[0.12, 0.25, 16]} position={[0, 0, 0]} rotation={[Math.PI, 0, 0]}>
             <meshStandardMaterial color={color} emissive={color} emissiveIntensity={6} />
           </Cone>
-          <group position={[0, 2.0, 0]}>
+          <group position={[0, 2.3, 0]}>
             <Text 
               fontSize={0.35} 
               color={color} 
@@ -31,6 +31,19 @@ const IndicatorArrow = ({ position, rotation, label, color = "#22d3ee" }: { posi
             >
               {label}
             </Text>
+            {subLabel && (
+              <Text 
+                fontSize={0.2} 
+                color={color} 
+                fontStyle="italic"
+                position={[0, -0.35, 0]}
+                anchorX="center" 
+                anchorY="middle"
+                fillOpacity={0.7}
+              >
+                {subLabel}
+              </Text>
+            )}
           </group>
         </group>
       </Float>
@@ -38,29 +51,299 @@ const IndicatorArrow = ({ position, rotation, label, color = "#22d3ee" }: { posi
   );
 };
 
-// --- PHYSICS: NEWTON'S SECOND LAW ---
-const Car = ({ scale = 1.2 }) => {
-  const wheelsRef = useRef<THREE.Group>(null);
-  useFrame(() => { 
-    if (wheelsRef.current) {
-      wheelsRef.current.children.forEach(w => w.rotation.x += 0.1); 
+// --- KINGDOM: ANIMALIA SPECIMENS ---
+
+// Fix: Implemented MoonJellyfish component with pulsating animation
+const MoonJellyfish = () => {
+  const meshRef = useRef<THREE.Mesh>(null);
+  useFrame((state) => {
+    const t = state.clock.getElapsedTime();
+    if (meshRef.current) {
+      const pulse = Math.sin(t * 2) * 0.1 + 0.9;
+      meshRef.current.scale.set(pulse, 1, pulse);
+      meshRef.current.position.y = Math.sin(t * 0.5) * 0.5;
     }
   });
+
   return (
-    <group scale={scale}>
-      <Box args={[2.5, 0.6, 1.2]} position={[0, 0.5, 0]}>
-        <meshStandardMaterial color="#ef4444" metalness={0.7} roughness={0.2} emissive="#ef4444" emissiveIntensity={0.2} />
-      </Box>
-      <Box args={[1.2, 0.6, 1.0]} position={[-0.2, 1.0, 0]}>
-        <meshStandardMaterial color="#1e293b" metalness={0.9} roughness={0.1} transparent opacity={0.8} />
-      </Box>
-      <group ref={wheelsRef}>
-        {[[-0.8, 0.3, 0.6], [0.8, 0.3, 0.6], [-0.8, 0.3, -0.6], [0.8, 0.3, -0.6]].map((pos, i) => (
-          <Cylinder key={i} args={[0.3, 0.3, 0.2, 16]} position={pos as any} rotation={[Math.PI / 2, 0, 0]}>
-            <meshStandardMaterial color="#111827" />
+    <group scale={1.5}>
+      <Sphere ref={meshRef} args={[1, 32, 32]} scale={[1, 0.6, 1]}>
+        <meshStandardMaterial color="#93c5fd" transparent opacity={0.6} emissive="#60a5fa" emissiveIntensity={2} />
+      </Sphere>
+      {[0, 1, 2, 3, 4, 5].map((i) => (
+        <group key={i} rotation={[0, (i * Math.PI) / 3, 0]}>
+          <Cylinder args={[0.01, 0.01, 2]} position={[0.5, -1, 0]}>
+            <meshStandardMaterial color="#60a5fa" transparent opacity={0.4} />
           </Cylinder>
-        ))}
+        </group>
+      ))}
+    </group>
+  );
+};
+
+// Fix: Implemented GreatWhiteShark component with swimming animation
+const GreatWhiteShark = () => {
+  const groupRef = useRef<THREE.Group>(null);
+  useFrame((state) => {
+    const t = state.clock.getElapsedTime();
+    if (groupRef.current) {
+      groupRef.current.position.y = Math.sin(t) * 0.2;
+      groupRef.current.rotation.y = Math.sin(t * 0.5) * 0.2;
+    }
+  });
+
+  return (
+    <group ref={groupRef} scale={1.2}>
+      <Sphere args={[1, 32, 32]} scale={[2.5, 0.8, 1]}>
+        <meshStandardMaterial color="#64748b" metalness={0.6} roughness={0.2} />
+      </Sphere>
+      <Box args={[0.1, 1, 0.6]} position={[0, 0.6, 0]} rotation={[0.4, 0, 0]}>
+        <meshStandardMaterial color="#475569" />
+      </Box>
+      <Box args={[0.1, 1.5, 1]} position={[-2.2, 0, 0]} rotation={[0, 0, 0.5]}>
+        <meshStandardMaterial color="#475569" />
+      </Box>
+    </group>
+  );
+};
+
+// Fix: Implemented HoneyBee component with rapid wing movement
+const HoneyBee = () => {
+  const wingsRef = useRef<THREE.Group>(null);
+  useFrame((state) => {
+    const t = state.clock.getElapsedTime();
+    if (wingsRef.current) {
+      wingsRef.current.children[0].rotation.z = Math.sin(t * 40) * 0.5;
+      wingsRef.current.children[1].rotation.z = -Math.sin(t * 40) * 0.5;
+    }
+  });
+
+  return (
+    <group scale={0.8}>
+      <Box args={[1, 0.6, 0.6]}>
+        <meshStandardMaterial color="#eab308" />
+      </Box>
+      <Box args={[0.2, 0.62, 0.62]} position={[0.2, 0, 0]}>
+        <meshStandardMaterial color="#000000" />
+      </Box>
+      <Box args={[0.2, 0.62, 0.62]} position={[-0.2, 0, 0]}>
+        <meshStandardMaterial color="#000000" />
+      </Box>
+      <group ref={wingsRef} position={[0, 0.3, 0]}>
+        <Box args={[0.8, 0.02, 1.2]} position={[0, 0, 0.6]}>
+          <meshStandardMaterial color="#ffffff" transparent opacity={0.5} />
+        </Box>
+        <Box args={[0.8, 0.02, 1.2]} position={[0, 0, -0.6]}>
+          <meshStandardMaterial color="#ffffff" transparent opacity={0.5} />
+        </Box>
       </group>
+    </group>
+  );
+};
+
+// Fix: Implemented AnimaliaModel component to coordinate animal specimens
+const AnimaliaModel = () => {
+  const rotationGroup = useRef<THREE.Group>(null);
+  useFrame((state) => {
+    if (rotationGroup.current) {
+      rotationGroup.current.rotation.y = state.clock.getElapsedTime() * 0.05;
+    }
+  });
+
+  return (
+    <group>
+      <Text position={[0, 8, 0]} fontSize={1} color="#f472b6" fontStyle="italic" anchorX="center">Kingdom: Animalia</Text>
+      
+      <group ref={rotationGroup}>
+        <group position={[6, -2, 0]}>
+          <MoonJellyfish />
+          <IndicatorArrow position={[0, 8, 0]} rotation={[0, 0, 0]} label="Moon Jellyfish" subLabel="*Aurelia aurita*" color="#60a5fa" />
+        </group>
+
+        <group position={[-3, -2, 5]}>
+          <GreatWhiteShark />
+          <IndicatorArrow position={[0, 8, 0]} rotation={[0, 0, 0]} label="Great White Shark" subLabel="*Carcharodon carcharias*" color="#64748b" />
+        </group>
+
+        <group position={[-3, -2, -5]}>
+          <HoneyBee />
+          <IndicatorArrow position={[0, 8, 0]} rotation={[0, 0, 0]} label="Honey Bee" subLabel="*Apis mellifera*" color="#eab308" />
+        </group>
+      </group>
+
+      <mesh position={[0, -4.1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[10, 64]} />
+        <meshStandardMaterial color="#f472b6" transparent opacity={0.1} />
+      </mesh>
+    </group>
+  );
+};
+
+// --- KINGDOM: PLANTAE SPECIMENS ---
+
+const OakTree = () => {
+  const canopyRef = useRef<THREE.Group>(null);
+  useFrame((state) => {
+    if (canopyRef.current) {
+      canopyRef.current.rotation.y = Math.sin(state.clock.getElapsedTime() * 0.5) * 0.05;
+      canopyRef.current.position.y = Math.sin(state.clock.getElapsedTime()) * 0.05;
+    }
+  });
+
+  return (
+    <group scale={0.7}>
+      {/* Trunk */}
+      <Cylinder args={[0.4, 0.6, 6]} position={[0, 3, 0]}>
+        <meshStandardMaterial color="#451a03" roughness={1} />
+      </Cylinder>
+      {/* Canopy */}
+      <group ref={canopyRef} position={[0, 6, 0]}>
+        <Sphere args={[2, 16, 16]} position={[0, 0, 0]}>
+          <meshStandardMaterial color="#14532d" emissive="#064e3b" emissiveIntensity={0.2} />
+        </Sphere>
+        <Sphere args={[1.5, 16, 16]} position={[1.5, -0.5, 0.5]}>
+          <meshStandardMaterial color="#166534" />
+        </Sphere>
+        <Sphere args={[1.5, 16, 16]} position={[-1.2, 0.5, -0.8]}>
+          <meshStandardMaterial color="#166534" />
+        </Sphere>
+        <Sphere args={[1.2, 16, 16]} position={[0.5, 1.2, -1]}>
+          <meshStandardMaterial color="#15803d" />
+        </Sphere>
+      </group>
+    </group>
+  );
+};
+
+const VenusFlytrap = () => {
+  const trapRef = useRef<THREE.Group>(null);
+  useFrame((state) => {
+    const t = state.clock.getElapsedTime();
+    const snap = Math.sin(t * 1.5) > 0.9 ? 1 : 0; // Simple snap effect
+    if (trapRef.current) {
+      const targetRot = snap ? 0.2 : 1.2;
+      trapRef.current.children[0].rotation.x = THREE.MathUtils.lerp(trapRef.current.children[0].rotation.x, targetRot, 0.1);
+      trapRef.current.children[1].rotation.x = THREE.MathUtils.lerp(trapRef.current.children[1].rotation.x, -targetRot, 0.1);
+    }
+  });
+
+  return (
+    <group scale={1.2}>
+      {/* Stem */}
+      <Cylinder args={[0.05, 0.08, 4]} position={[0, 2, 0]}>
+        <meshStandardMaterial color="#22c55e" />
+      </Cylinder>
+      {/* Trap mechanism */}
+      <group ref={trapRef} position={[0, 4, 0]}>
+        {/* Upper Leaf */}
+        <group rotation={[1.2, 0, 0]}>
+          <Box args={[1.5, 0.1, 1]} position={[0, 0, 0.5]}>
+            <meshStandardMaterial color="#166534" />
+            <Box args={[1.4, 0.1, 0.9]} position={[0, 0.05, 0]}>
+              <meshStandardMaterial color="#ef4444" emissive="#ef4444" emissiveIntensity={0.5} />
+            </Box>
+          </Box>
+        </group>
+        {/* Lower Leaf */}
+        <group rotation={[-1.2, 0, 0]}>
+          <Box args={[1.5, 0.1, 1]} position={[0, 0, 0.5]}>
+            <meshStandardMaterial color="#166534" />
+            <Box args={[1.4, 0.1, 0.9]} position={[0, -0.05, 0]}>
+              <meshStandardMaterial color="#ef4444" emissive="#ef4444" emissiveIntensity={0.5} />
+            </Box>
+          </Box>
+        </group>
+      </group>
+    </group>
+  );
+};
+
+const SwordFern = () => {
+  const frondsRef = useRef<THREE.Group>(null);
+  useFrame((state) => {
+    if (frondsRef.current) {
+      frondsRef.current.children.forEach((frond, i) => {
+        frond.rotation.z = Math.sin(state.clock.getElapsedTime() * 0.5 + i) * 0.1;
+      });
+    }
+  });
+
+  return (
+    <group ref={frondsRef}>
+      {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+        <group key={i} rotation={[0, (i * Math.PI) / 4, 0.5]}>
+          <Cylinder args={[0.02, 0.04, 5]} position={[0, 2.5, 0]}>
+            <meshStandardMaterial color="#15803d" />
+          </Cylinder>
+          {/* Leaves along the frond */}
+          {[1, 2, 3, 4].map((j) => (
+            <group key={j} position={[0, j, 0]}>
+              <Box args={[0.6, 0.05, 0.2]} position={[0.3, 0, 0]} rotation={[0, 0, 0.2]}>
+                <meshStandardMaterial color="#22c55e" />
+              </Box>
+              <Box args={[0.6, 0.05, 0.2]} position={[-0.3, 0, 0]} rotation={[0, 0, -0.2]}>
+                <meshStandardMaterial color="#22c55e" />
+              </Box>
+            </group>
+          ))}
+        </group>
+      ))}
+    </group>
+  );
+};
+
+const PlantaeModel = () => {
+  const rotationGroup = useRef<THREE.Group>(null);
+  useFrame((state) => {
+    if (rotationGroup.current) {
+      rotationGroup.current.rotation.y = state.clock.getElapsedTime() * 0.05;
+    }
+  });
+
+  return (
+    <group>
+      <Text position={[0, 8, 0]} fontSize={1} color="#4ade80" fontStyle="italic" anchorX="center">Kingdom: Plantae</Text>
+      
+      <group ref={rotationGroup}>
+        {/* Oak Tree */}
+        <group position={[6, -4, 0]}>
+          <OakTree />
+          <IndicatorArrow position={[0, 10, 0]} rotation={[0, 0, 0]} label="English Oak" subLabel="*Quercus robur*" color="#4ade80" />
+        </group>
+
+        {/* Venus Flytrap */}
+        <group position={[-3, -4, 5]}>
+          <VenusFlytrap />
+          <IndicatorArrow position={[0, 7, 0]} rotation={[0, 0, 0]} label="Venus Flytrap" subLabel="*Dionaea muscipula*" color="#ef4444" />
+        </group>
+
+        {/* Sword Fern */}
+        <group position={[-3, -4, -5]}>
+          <SwordFern />
+          <IndicatorArrow position={[0, 7, 0]} rotation={[0, 0, 0]} label="Sword Fern" subLabel="*Polystichum munitum*" color="#22c55e" />
+        </group>
+      </group>
+
+      {/* Ground glow */}
+      <mesh position={[0, -4.1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[10, 64]} />
+        <meshStandardMaterial color="#14532d" transparent opacity={0.1} />
+      </mesh>
+    </group>
+  );
+};
+
+// --- REMAINING MODELS ---
+
+const RealisticSun = ({ position = [0, 0, 0] as [number, number, number], scale = 2 }) => {
+  const coreRef = useRef<THREE.Mesh>(null);
+  useFrame((state) => { if (coreRef.current) coreRef.current.rotation.y = state.clock.getElapsedTime() * 0.05; });
+  return (
+    <group position={position}>
+      <Sphere ref={coreRef} args={[scale, 64, 64]}>
+        <meshStandardMaterial color="#fff7ed" emissive="#facc15" emissiveIntensity={10} roughness={0.1} />
+      </Sphere>
+      <pointLight intensity={15} distance={60} color="#fff7ed" />
     </group>
   );
 };
@@ -89,31 +372,28 @@ const NewtonModel = () => {
   );
 };
 
-// --- ASTRONOMY: ORBITAL MECHANICS ---
-const Satellite = ({ radius = 3, speed = 1 }) => {
-  const ref = useRef<THREE.Group>(null);
-  useFrame((state) => {
-    const t = state.clock.getElapsedTime() * speed;
-    if (ref.current) {
-      ref.current.position.x = Math.cos(t) * radius;
-      ref.current.position.z = Math.sin(t) * radius;
-      ref.current.rotation.y = -t;
+const Car = ({ scale = 1.2 }) => {
+  const wheelsRef = useRef<THREE.Group>(null);
+  useFrame(() => { 
+    if (wheelsRef.current) {
+      wheelsRef.current.children.forEach(w => w.rotation.x += 0.1); 
     }
   });
   return (
-    <group ref={ref}>
-      <Box args={[0.4, 0.4, 0.4]}>
-        <meshStandardMaterial color="#94a3b8" metalness={1} roughness={0.1} />
+    <group scale={scale}>
+      <Box args={[2.5, 0.6, 1.2]} position={[0, 0.5, 0]}>
+        <meshStandardMaterial color="#ef4444" metalness={0.7} roughness={0.2} emissive="#ef4444" emissiveIntensity={0.2} />
       </Box>
-      <Box args={[1.5, 0.05, 0.6]} position={[1, 0, 0]}>
-        <meshStandardMaterial color="#1e40af" emissive="#1e40af" emissiveIntensity={0.5} />
+      <Box args={[1.2, 0.6, 1.0]} position={[-0.2, 1.0, 0]}>
+        <meshStandardMaterial color="#1e293b" metalness={0.9} roughness={0.1} transparent opacity={0.8} />
       </Box>
-      <Box args={[1.5, 0.05, 0.6]} position={[-1, 0, 0]}>
-        <meshStandardMaterial color="#1e40af" emissive="#1e40af" emissiveIntensity={0.5} />
-      </Box>
-      <Cylinder args={[0.02, 0.02, 0.5]} position={[0, 0.4, 0]}>
-        <meshStandardMaterial color="#cbd5e1" />
-      </Cylinder>
+      <group ref={wheelsRef}>
+        {[[-0.8, 0.3, 0.6], [0.8, 0.3, 0.6], [-0.8, 0.3, -0.6], [0.8, 0.3, -0.6]].map((pos, i) => (
+          <Cylinder key={i} args={[0.3, 0.3, 0.2, 16]} position={pos as any} rotation={[Math.PI / 2, 0, 0]}>
+            <meshStandardMaterial color="#111827" />
+          </Cylinder>
+        ))}
+      </group>
     </group>
   );
 };
@@ -150,18 +430,30 @@ const SolarSystemModel = () => {
   );
 };
 
-// --- MAGNETISM: DUAL BAR MAGNETS ---
-const BarMagnet = ({ position, rotation }: { position: [number, number, number], rotation: [number, number, number] }) => {
+const Satellite = ({ radius = 3, speed = 1 }) => {
+  const ref = useRef<THREE.Group>(null);
+  useFrame((state) => {
+    const t = state.clock.getElapsedTime() * speed;
+    if (ref.current) {
+      ref.current.position.x = Math.cos(t) * radius;
+      ref.current.position.z = Math.sin(t) * radius;
+      ref.current.rotation.y = -t;
+    }
+  });
   return (
-    <group position={position} rotation={rotation}>
-      <Box args={[1, 1.5, 1]} position={[0, 0.75, 0]}>
-        <meshStandardMaterial color="#ef4444" metalness={0.5} roughness={0.2} emissive="#ef4444" emissiveIntensity={0.5} />
-        <Text position={[0, 0, 0.51]} fontSize={0.4} color="white">N</Text>
+    <group ref={ref}>
+      <Box args={[0.4, 0.4, 0.4]}>
+        <meshStandardMaterial color="#94a3b8" metalness={1} roughness={0.1} />
       </Box>
-      <Box args={[1, 1.5, 1]} position={[0, -0.75, 0]}>
-        <meshStandardMaterial color="#3b82f6" metalness={0.5} roughness={0.2} emissive="#3b82f6" emissiveIntensity={0.5} />
-        <Text position={[0, 0, 0.51]} fontSize={0.4} color="white">S</Text>
+      <Box args={[1.5, 0.05, 0.6]} position={[1, 0, 0]}>
+        <meshStandardMaterial color="#1e40af" emissive="#1e40af" emissiveIntensity={0.5} />
       </Box>
+      <Box args={[1.5, 0.05, 0.6]} position={[-1, 0, 0]}>
+        <meshStandardMaterial color="#1e40af" emissive="#1e40af" emissiveIntensity={0.5} />
+      </Box>
+      <Cylinder args={[0.02, 0.02, 0.5]} position={[0, 0.4, 0]}>
+        <meshStandardMaterial color="#cbd5e1" />
+      </Cylinder>
     </group>
   );
 };
@@ -193,13 +485,62 @@ const MagnetismModel = () => {
   );
 };
 
-// --- PHOTOSYNTHESIS: SUNLIGHT & GROWTH ---
-const PhotonRay = ({ delay = 0 }) => {
+const BarMagnet = ({ position, rotation }: { position: [number, number, number], rotation: [number, number, number] }) => {
+  return (
+    <group position={position} rotation={rotation}>
+      <Box args={[1, 1.5, 1]} position={[0, 0.75, 0]}>
+        <meshStandardMaterial color="#ef4444" metalness={0.5} roughness={0.2} emissive="#ef4444" emissiveIntensity={0.5} />
+        <Text position={[0, 0, 0.51]} fontSize={0.4} color="white">N</Text>
+      </Box>
+      <Box args={[1, 1.5, 1]} position={[0, -0.75, 0]}>
+        <meshStandardMaterial color="#3b82f6" metalness={0.5} roughness={0.2} emissive="#3b82f6" emissiveIntensity={0.5} />
+        <Text position={[0, 0, 0.51]} fontSize={0.4} color="white">S</Text>
+      </Box>
+    </group>
+  );
+};
+
+const PhotosynthesisModel = () => {
+  const plantRef = useRef<THREE.Group>(null);
+  useFrame((state) => {
+    const t = state.clock.getElapsedTime();
+    const growth = (Math.sin(t * 0.3 - Math.PI / 2) + 1) / 2;
+    const currentScale = 0.2 + growth * 1.5;
+    if (plantRef.current) {
+      plantRef.current.scale.setScalar(currentScale);
+    }
+  });
+
+  return (
+    <group>
+      <RealisticSun position={[0, 10, -8]} scale={1.8} />
+      {[0, 0.4, 0.8, 1.2, 1.6].map((d) => <PhotonRay key={d} delay={d} />)}
+      <group ref={plantRef} position={[0, -5, 0]}>
+        <Cylinder args={[1.5, 1, 1.5, 16]} position={[0, 0.75, 0]}>
+          <meshStandardMaterial color="#78350f" />
+        </Cylinder>
+        <Cylinder args={[0.2, 0.3, 8, 16]} position={[0, 4.5, 0]}>
+          <meshStandardMaterial color="#15803d" />
+        </Cylinder>
+        {[2, 4, 6].map((y, i) => (
+          <group key={y} position={[0, y, 0]} rotation={[0, (i * Math.PI) / 2, 0]}>
+            <Box args={[3, 0.1, 1.5]} position={[1.5, 0, 0]} rotation={[0, 0, Math.PI / 10]}>
+              <meshStandardMaterial color="#22c55e" />
+            </Box>
+          </group>
+        ))}
+        <IndicatorArrow position={[0, 9, 0]} rotation={[0, 0, 0]} label="Photosynthesis in Action" color="#22c55e" />
+      </group>
+      <Text position={[0, 10, 0]} fontSize={0.7} color="#22c55e" anchorX="center">Solar Energy -> Chemical Energy</Text>
+    </group>
+  );
+};
+
+const PhotonRay: React.FC<{ delay?: number }> = ({ delay = 0 }) => {
   const rayRef = useRef<THREE.Group>(null);
   useFrame((state) => {
     const t = (state.clock.getElapsedTime() + delay) % 2;
     if (rayRef.current) {
-      // Move from Sun [0, 10, -8] to Plant [0, -2, 0]
       rayRef.current.position.x = 0;
       rayRef.current.position.y = 10 - t * 6;
       rayRef.current.position.z = -8 + t * 4;
@@ -216,77 +557,41 @@ const PhotonRay = ({ delay = 0 }) => {
   );
 };
 
-const PhotosynthesisModel = () => {
-  const plantRef = useRef<THREE.Group>(null);
-  useFrame((state) => {
-    const t = state.clock.getElapsedTime();
-    // Growth cycle: Grows to full size every 10 seconds
-    const growth = (Math.sin(t * 0.3 - Math.PI / 2) + 1) / 2;
-    const currentScale = 0.2 + growth * 1.5;
-    if (plantRef.current) {
-      plantRef.current.scale.setScalar(currentScale);
-    }
-  });
-
+const SoundWavesModel = () => {
   return (
     <group>
-      <RealisticSun position={[0, 10, -8]} scale={1.8} />
-      
-      {/* Sunlight rays */}
-      {[0, 0.4, 0.8, 1.2, 1.6].map((d) => <PhotonRay key={d} delay={d} />)}
-
-      <group ref={plantRef} position={[0, -5, 0]}>
-        {/* Pot */}
-        <Cylinder args={[1.5, 1, 1.5, 16]} position={[0, 0.75, 0]}>
-          <meshStandardMaterial color="#78350f" />
-        </Cylinder>
-        {/* Stem */}
-        <Cylinder args={[0.2, 0.3, 8, 16]} position={[0, 4.5, 0]}>
-          <meshStandardMaterial color="#15803d" />
-        </Cylinder>
-        {/* Leaves */}
-        {[2, 4, 6].map((y, i) => (
-          <group key={y} position={[0, y, 0]} rotation={[0, (i * Math.PI) / 2, 0]}>
-            <Box args={[3, 0.1, 1.5]} position={[1.5, 0, 0]} rotation={[0, 0, Math.PI / 10]}>
-              <meshStandardMaterial color="#22c55e" />
-            </Box>
-          </group>
-        ))}
-        <IndicatorArrow position={[0, 9, 0]} rotation={[0, 0, 0]} label="Photosynthesis in Action" color="#22c55e" />
+      <TuningFork />
+      <SoundRipples />
+      <IndicatorArrow position={[0, 6, 0]} rotation={[0, 0, 0]} label="Vibrating Tuning Fork" color="#38bdf8" />
+      <group position={[0, -6, 0]}>
+        <Text fontSize={0.6} color="#38bdf8" anchorX="center" anchorY="top">SPEED OF SOUND: ~343 m/s</Text>
+        <Text fontSize={0.3} position={[0, -0.8, 0]} color="#94a3b8" anchorX="center" anchorY="top">Longitudinal Pressure Waves traveling through air</Text>
       </group>
-
-      <Text position={[0, 10, 0]} fontSize={0.7} color="#22c55e" anchorX="center">Solar Energy -> Chemical Energy</Text>
     </group>
   );
 };
 
-// --- SOUND WAVES: TUNING FORK & SPEED ---
 const TuningFork = () => {
   const forkRef = useRef<THREE.Group>(null);
   useFrame((state) => {
     if (forkRef.current) {
-      // Vibrate the fork
       const t = state.clock.getElapsedTime();
       const vibration = Math.sin(t * 100) * 0.01;
-      forkRef.current.children[1].rotation.z = Math.PI / 2 + vibration; // Prongs
+      forkRef.current.children[1].rotation.z = Math.PI / 2 + vibration;
       forkRef.current.children[2].rotation.z = -Math.PI / 2 - vibration;
     }
   });
   return (
     <group ref={forkRef} position={[0, 0, 0]}>
-      {/* Handle */}
       <Cylinder args={[0.2, 0.2, 3]} position={[0, -1.5, 0]}>
         <meshStandardMaterial color="#94a3b8" metalness={1} roughness={0.1} />
       </Cylinder>
-      {/* Base of prongs */}
       <Box args={[1.5, 0.4, 0.4]} position={[0, 0, 0]}>
         <meshStandardMaterial color="#94a3b8" metalness={1} roughness={0.1} />
       </Box>
-      {/* Prong 1 */}
       <Cylinder args={[0.2, 0.2, 4]} position={[0.75, 2, 0]}>
         <meshStandardMaterial color="#94a3b8" metalness={1} roughness={0.1} />
       </Cylinder>
-      {/* Prong 2 */}
       <Cylinder args={[0.2, 0.2, 4]} position={[-0.75, 2, 0]}>
         <meshStandardMaterial color="#94a3b8" metalness={1} roughness={0.1} />
       </Cylinder>
@@ -312,40 +617,6 @@ const SoundRipples = () => {
           <meshBasicMaterial color="#38bdf8" transparent opacity={0.3} />
         </Torus>
       ))}
-    </group>
-  );
-};
-
-const SoundWavesModel = () => {
-  return (
-    <group>
-      <TuningFork />
-      <SoundRipples />
-      
-      <IndicatorArrow position={[0, 6, 0]} rotation={[0, 0, 0]} label="Vibrating Tuning Fork" color="#38bdf8" />
-      
-      <group position={[0, -6, 0]}>
-        <Text fontSize={0.6} color="#38bdf8" anchorX="center" anchorY="top">
-          SPEED OF SOUND: ~343 m/s
-        </Text>
-        <Text fontSize={0.3} position={[0, -0.8, 0]} color="#94a3b8" anchorX="center" anchorY="top">
-          Longitudinal Pressure Waves traveling through air
-        </Text>
-      </group>
-    </group>
-  );
-};
-
-// --- REMAINING MODELS ---
-const RealisticSun = ({ position = [0, 0, 0] as [number, number, number], scale = 2 }) => {
-  const coreRef = useRef<THREE.Mesh>(null);
-  useFrame((state) => { if (coreRef.current) coreRef.current.rotation.y = state.clock.getElapsedTime() * 0.05; });
-  return (
-    <group position={position}>
-      <Sphere ref={coreRef} args={[scale, 64, 64]}>
-        <meshStandardMaterial color="#fff7ed" emissive="#facc15" emissiveIntensity={10} roughness={0.1} />
-      </Sphere>
-      <pointLight intensity={15} distance={60} color="#fff7ed" />
     </group>
   );
 };
@@ -425,45 +696,6 @@ const ElectronOrbit: React.FC<{ radius: number, speed: number, offset: number, t
   );
 };
 
-const BloodCell = ({ position }: { position: [number, number, number] }) => {
-  const ref = useRef<THREE.Mesh>(null);
-  useFrame((state) => {
-    const t = state.clock.getElapsedTime();
-    if (ref.current) {
-      ref.current.rotation.x += 0.01;
-      ref.current.rotation.y += 0.015;
-      ref.current.position.y += Math.sin(t + position[0]) * 0.005;
-    }
-  });
-  return (
-    <mesh ref={ref} position={position} scale={[1, 0.4, 1]}>
-      <sphereGeometry args={[0.6, 32, 32]} />
-      <meshStandardMaterial color="#b91c1c" metalness={0.1} roughness={0.8} emissive="#7f1d1d" emissiveIntensity={0.5} />
-    </mesh>
-  );
-};
-
-const Chromosome = ({ position }: { position: [number, number, number] }) => {
-  const ref = useRef<THREE.Group>(null);
-  useFrame((state) => {
-    if (ref.current) ref.current.rotation.y = state.clock.getElapsedTime() * 0.2;
-  });
-  return (
-    <group ref={ref} position={position}>
-      <Capsule args={[0.3, 3, 16, 32]} rotation={[0, 0, Math.PI / 6]}>
-        <meshStandardMaterial color="#ec4899" emissive="#ec4899" emissiveIntensity={2} transparent opacity={0.8} />
-      </Capsule>
-      <Capsule args={[0.3, 3, 16, 32]} rotation={[0, 0, -Math.PI / 6]}>
-        <meshStandardMaterial color="#ec4899" emissive="#ec4899" emissiveIntensity={2} transparent opacity={0.8} />
-      </Capsule>
-      <Sphere args={[0.4, 16, 16]}>
-        <meshStandardMaterial color="#f472b6" emissive="#f472b6" emissiveIntensity={4} />
-      </Sphere>
-      <IndicatorArrow position={[0, 3, 0]} rotation={[0, 0, 0]} label="Chromosome" color="#ec4899" />
-    </group>
-  );
-};
-
 const DNAStructureModel = () => {
   const dnaRef = useRef<THREE.Group>(null);
   const helixData = useMemo(() => {
@@ -508,6 +740,45 @@ const DNAStructureModel = () => {
   );
 };
 
+const BloodCell = ({ position }: { position: [number, number, number] }) => {
+  const ref = useRef<THREE.Mesh>(null);
+  useFrame((state) => {
+    const t = state.clock.getElapsedTime();
+    if (ref.current) {
+      ref.current.rotation.x += 0.01;
+      ref.current.rotation.y += 0.015;
+      ref.current.position.y += Math.sin(t + position[0]) * 0.005;
+    }
+  });
+  return (
+    <mesh ref={ref} position={position} scale={[1, 0.4, 1]}>
+      <sphereGeometry args={[0.6, 32, 32]} />
+      <meshStandardMaterial color="#b91c1c" metalness={0.1} roughness={0.8} emissive="#7f1d1d" emissiveIntensity={0.5} />
+    </mesh>
+  );
+};
+
+const Chromosome = ({ position }: { position: [number, number, number] }) => {
+  const ref = useRef<THREE.Group>(null);
+  useFrame((state) => {
+    if (ref.current) ref.current.rotation.y = state.clock.getElapsedTime() * 0.2;
+  });
+  return (
+    <group ref={ref} position={position}>
+      <Capsule args={[0.3, 3, 16, 32]} rotation={[0, 0, Math.PI / 6]}>
+        <meshStandardMaterial color="#ec4899" emissive="#ec4899" emissiveIntensity={2} transparent opacity={0.8} />
+      </Capsule>
+      <Capsule args={[0.3, 3, 16, 32]} rotation={[0, 0, -Math.PI / 6]}>
+        <meshStandardMaterial color="#ec4899" emissive="#ec4899" emissiveIntensity={2} transparent opacity={0.8} />
+      </Capsule>
+      <Sphere args={[0.4, 16, 16]}>
+        <meshStandardMaterial color="#f472b6" emissive="#f472b6" emissiveIntensity={4} />
+      </Sphere>
+      <IndicatorArrow position={[0, 3, 0]} rotation={[0, 0, 0]} label="Chromosome" color="#ec4899" />
+    </group>
+  );
+};
+
 const MolecularBondingModel = () => {
   const groupRef = useRef<THREE.Group>(null);
   useFrame((state) => { if (groupRef.current) groupRef.current.rotation.y = state.clock.getElapsedTime() * 0.3; });
@@ -525,9 +796,6 @@ const MolecularBondingModel = () => {
     </group>
   );
 };
-
-const AnimaliaModel = () => (<group><Text position={[0, 5, 0]} fontSize={0.6} color="#f472b6">Biological Systems</Text></group>);
-const PlantaeModel = () => (<group><Text position={[0, 6, 0]} fontSize={0.6} color="#4ade80">Vascular Plant Transport</Text></group>);
 
 // Master Export Component
 export const ScienceSimulation: React.FC<{ type: ScienceModule }> = ({ type }) => {

@@ -101,25 +101,25 @@ export const MODULES: ScienceModuleConfig = {
   [ScienceModule.ANIMALIA]: {
     id: ScienceModule.ANIMALIA,
     title: "Kingdom: Animalia",
-    description: "Explore the complex structures and behaviors of animals.",
-    lectureText: "Welcome to the Animal Kingdom! Animals are multicellular, eukaryotic organisms that must consume organic material to live. Most have specialized tissues like nerves and muscles. Look at this jellyfish simulation: it uses primitive muscles to pulsate, showing how life moves and reacts to its environment to survive.",
+    description: "Explore the complex structures and behaviors of animals with scientific classification.",
+    lectureText: "Welcome to the Biological Wing! Kingdom Animalia is incredibly diverse. To keep track of millions of species, scientists use 'Binomial Nomenclature'—giving every animal a two-part Latin name. Look at these holographic specimens: the Moon Jellyfish, or *Aurelia aurita*, which pulsates with primitive muscles; the Great White Shark, *Carcharodon carcharias*, an apex predator of the ocean; and the Honey Bee, *Apis mellifera*, which shows complex social structure. All these creatures share one thing: they are multicellular organisms that must find their own food!",
     color: "#f472b6",
     quiz: [
-      { question: "Which of these is a characteristic of all animals?", options: ["They have leaves", "They are multicellular", "They make their own food", "They never move"], correctAnswer: 1 },
-      { question: "Animals that eat other organisms are called?", options: ["Autotrophs", "Producers", "Heterotrophs", "Phototrophs"], correctAnswer: 2 },
-      { question: "What specialized tissue allows animals to move?", options: ["Xylem", "Phloem", "Muscle tissue", "Epithelial tissue"], correctAnswer: 2 }
+      { question: "What is the scientific naming system called?", options: ["Common Naming", "Latin Listing", "Binomial Nomenclature", "Biological ID"], correctAnswer: 2 },
+      { question: "Which animal shown is the 'Apis mellifera'?", options: ["The Shark", "The Jellyfish", "The Honey Bee", "The Lion"], correctAnswer: 2 },
+      { question: "Animals are 'heterotrophs', which means they...", options: ["Make their own food", "Must consume organic material", "Can live without air", "Are made of one cell"], correctAnswer: 1 }
     ]
   },
   [ScienceModule.PLANTAE]: {
     id: ScienceModule.PLANTAE,
     title: "Kingdom: Plantae",
-    description: "Discover the structural engineering of trees and flora.",
-    lectureText: "The Kingdom Plantae includes all land plants. Unlike animals, plants are autotrophs—they build their own bodies using sunlight. Look at this holographic tree: notice the stem providing structure and the vascular system within. Xylem brings water up from the roots, while Phloem distributes energy throughout the plant.",
+    description: "Explore diverse plant life, from forest titans to carnivorous predators.",
+    lectureText: "Welcome to the Botanical Lab! Kingdom Plantae includes over 300,000 species of autotrophs—organisms that build their own food using sunlight. We use binomial nomenclature to classify them as well. Observe our holographic garden: the English Oak (*Quercus robur*), a titan of the forest; the Venus Flytrap (*Dionaea muscipula*), showcasing a unique carnivorous adaptation; and the Western Sword Fern (*Polystichum munitum*), representing ancient vascular lineages. Every green part you see contains chlorophyll, the magic engine of our planet!",
     color: "#4ade80",
     quiz: [
-      { question: "What substance do plants use to build their cell walls?", options: ["Protein", "Cellulose", "Keratin", "Lipids"], correctAnswer: 1 },
-      { question: "Which tissue carries water up from the roots?", options: ["Phloem", "Xylem", "Epidermis", "Cortex"], correctAnswer: 1 },
-      { question: "Plants are 'autotrophs' because they...?", options: ["Eat insects", "Produce their own food", "Run from predators", "Live in water"], correctAnswer: 1 }
+      { question: "What is the scientific name for the Venus Flytrap?", options: ["Quercus robur", "Dionaea muscipula", "Apis mellifera", "Aurelia aurita"], correctAnswer: 1 },
+      { question: "Which plant specimen represents an ancient vascular lineage?", options: ["The Oak Tree", "The Fern", "The Flytrap", "The Rose"], correctAnswer: 1 },
+      { question: "Plants are 'autotrophs' because they build food from...?", options: ["Other insects", "Sunlight and CO2", "Soil alone", "Rain water"], correctAnswer: 1 }
     ]
   }
 };
